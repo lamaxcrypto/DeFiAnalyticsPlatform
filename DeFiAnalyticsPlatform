@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract DeFiAnalyticsPlatform {
+    struct Protocol {
+        uint256 id;
+        string name;
+        uint256 totalValueLocked;  // Total value locked in the protocol
+        uint256 totalUsers;        // Total number of users in the protocol
+    }
+
+    mapping(uint256 => Protocol) public protocols;
+    uint256 public nextProtocolId = 1;
+
+    event ProtocolAdded(uint256 indexed id, string name, uint256 totalValueLocked, uint256 totalUsers);
+
+    function addProtocol(string memory name, uint256 totalValueLocked, uint256 totalUsers) external {
+        require(bytes(name).length > 0, "Name cannot be empty");
+
+        protocols[nextProtocolId] = Protocol(nextProtocolId, name, totalValueLocked, totalUsers);
+        emit ProtocolAdded(nextProtocolId, name, totalValueLocked, totalUsers);
+
+        nextProtocolId++;
+    }
+
+    function getProtocol(uint256 id) external view returns (string memory name, uint256 totalValueLocked, uint256 totalUsers) {
+        Protocol storage protocol = protocols[id];
+        return (protocol.name, protocol.totalValueLocked, protocol.totalUsers);
+    }
+}
